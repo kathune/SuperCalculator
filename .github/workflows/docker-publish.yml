@@ -1,0 +1,31 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    tags:
+      - '*'  # Déclenche le workflow à chaque création de tag
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Cloner le repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Étape 2 : Configurer Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Étape 3 : Construire et pousser l'image Docker
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: kamganelly123456/supercalculator:${{ github.ref_name }}
